@@ -1,0 +1,13 @@
+{
+  "version": "0.1.0",
+  "components": [
+    {
+      "name": "button",
+      "description": "Accessible button with variant and size options",
+      "files": ["button.rs"],
+      "cargo_deps": [
+        { "name": "yew", "version": "0.21", "features": ["csr"] }
+      ]
+    }
+  ]
+}
