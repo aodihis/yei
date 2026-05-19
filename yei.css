@@ -1,0 +1,105 @@
+/* yei design tokens and component utilities
+   ----------------------------------------
+   Copy this file to your project and add to your CSS entry file:
+     @import "tailwindcss";
+     @import "./yei.css";
+*/
+
+/* --- Design tokens (:root overrides for theming) --- */
+
+:root {
+  --background:            oklch(1 0 0);
+  --foreground:            oklch(0.145 0 0);
+
+  --primary:               oklch(0.205 0 0);
+  --primary-foreground:    oklch(0.985 0 0);
+
+  --secondary:             oklch(0.97 0 0);
+  --secondary-foreground:  oklch(0.205 0 0);
+
+  --danger:                oklch(0.577 0.245 27.325);
+  --on-danger:             oklch(0.985 0 0);
+
+  --muted:                 oklch(0.97 0 0);
+  --muted-foreground:      oklch(0.205 0 0);
+
+  --success:               oklch(0.527 0.154 150);
+  --warning:               oklch(0.769 0.188 70);
+
+  --field:                 oklch(0.97 0 0);
+  --border:                oklch(0.922 0 0);
+  --focus:                 oklch(0.708 0 0);
+
+  --radius:                0.625rem;
+}
+
+/* --- Tailwind v4 theme (references :root vars at runtime) --- */
+
+@theme inline {
+  --color-background:           var(--background);
+  --color-foreground:           var(--foreground);
+
+  --color-primary:              var(--primary);
+  --color-primary-foreground:   var(--primary-foreground);
+
+  --color-secondary:            var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-danger:               var(--danger);
+  --color-on-danger:            var(--on-danger);
+
+  --color-muted:                var(--muted);
+  --color-muted-foreground:     var(--muted-foreground);
+
+  --color-success:              var(--success);
+  --color-warning:              var(--warning);
+
+  --color-field:                var(--field);
+  --color-border:               var(--border);
+  --color-focus:                var(--focus);
+
+  --animate-toast-in:           yei-toast-in         0.25s ease-out;
+
+  --animate-drawer-in-left:     yei-drawer-in-left   0.3s ease-out;
+  --animate-drawer-in-right:    yei-drawer-in-right  0.3s ease-out;
+  --animate-drawer-in-top:      yei-drawer-in-top    0.3s ease-out;
+  --animate-drawer-in-bottom:   yei-drawer-in-bottom 0.3s ease-out;
+}
+
+/* --- Keyframes --- */
+
+@keyframes yei-toast-in {
+  from { transform: translateX(calc(100% + 1rem)); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes yei-drawer-in-left   { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes yei-drawer-in-right  { from { transform: translateX(100%);  } to { transform: translateX(0); } }
+@keyframes yei-drawer-in-top    { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes yei-drawer-in-bottom { from { transform: translateY(100%);  } to { transform: translateY(0); } }
+
+@keyframes yei-modal-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes yei-modal-panel-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes yei-carousel-slide-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes yei-carousel-slide-left {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+/* --- Component utility classes (yei- prefix avoids CSS collisions) --- */
+
+.yei-modal-overlay { animation: yei-modal-overlay-in 0.15s ease-out; }
+.yei-modal-panel   { animation: yei-modal-panel-in   0.15s ease-out; }
+
+.yei-carousel-enter-right { animation: yei-carousel-slide-right 0.35s ease-out; }
+.yei-carousel-enter-left  { animation: yei-carousel-slide-left  0.35s ease-out; }
