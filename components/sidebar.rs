@@ -41,6 +41,8 @@ pub struct SidebarProps {
     pub children: Children,
     #[prop_or(true)]
     pub default_open: bool,
+    #[prop_or(true)]
+    pub minimizable: bool,
     #[prop_or_default]
     pub class: Classes,
 }
@@ -93,10 +95,12 @@ impl Component for Sidebar {
             <ContextProvider<SidebarContext> context={ctx_val}>
                 <aside class={aside_cls}>
                     { for p.children.iter() }
-                    <button type="button" class={btn_cls} onclick={minimize_cb} aria-label="Toggle minimize">
-                        <span class={chevron_cls}>{ icon_chevron_right() }</span>
-                        <span class="truncate yei-sidebar-label">{"Minimize"}</span>
-                    </button>
+                    if p.minimizable {
+                        <button type="button" class={btn_cls} onclick={minimize_cb} aria-label="Toggle minimize">
+                            <span class={chevron_cls}>{ icon_chevron_right() }</span>
+                            <span class="truncate yei-sidebar-label">{"Minimize"}</span>
+                        </button>
+                    }
                 </aside>
             </ContextProvider<SidebarContext>>
         }
