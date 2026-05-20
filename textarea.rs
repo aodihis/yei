@@ -59,11 +59,10 @@ impl Component for Textarea {
                 rows={p.rows.to_string()}
                 placeholder={p.placeholder.clone()}
                 disabled={p.disabled}
+                value={p.value.clone()}
                 oninput={p.oninput.clone()}
                 onchange={p.onchange.clone()}
-            >
-                { p.value.clone() }
-            </textarea>
+            />
         }
     }
 }

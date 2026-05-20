@@ -303,7 +303,7 @@ impl JsonDataTable {
                             let go = ctx.link().callback(move |_: MouseEvent| JsonDataTableMsg::GoTo(pg));
                             html! {
                                 <PaginationItem active={pg == cur} onclick={go}>
-                                    { pg + 1 }
+                                    { Html::from(format!("{}", pg + 1)) }
                                 </PaginationItem>
                             }
                         }
