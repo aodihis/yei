@@ -35,9 +35,9 @@ jobs:
                   if dep not in names:
                       errors.append(f"[{c['name']}] dep '{dep}' is not in the registry")
 
-          # Every .rs file on disk must be registered
+          # Every .rs file in components/ must be registered
           registered_files = {f for c in components for f in c["files"]}
-          for fpath in glob.glob("*.rs"):
+          for fpath in glob.glob("components/*.rs"):
               if fpath not in registered_files:
                   errors.append(f"File '{fpath}' exists on disk but is not listed in registry.json")
 
@@ -53,3 +53,18 @@ jobs:
 
           print(f"✓ registry.json valid — {len(components)} components, no missing files or broken deps")
           EOF
+
+  deploy:
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull registry on VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /opt/yei-registry
+            git pull --ff-only
