@@ -4,311 +4,311 @@
     {
       "name": "icons",
       "description": "SVG icon set used by many components — installed automatically as a dependency",
-      "files": ["icons.rs"],
+      "files": ["components/icons.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "accordion",
       "description": "Collapsible content sections with animated open/close",
-      "files": ["accordion.rs"],
+      "files": ["components/accordion.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "alert",
       "description": "Contextual feedback messages with variant styles",
-      "files": ["alert.rs"],
+      "files": ["components/alert.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "badge",
       "description": "Small status and label indicators",
-      "files": ["badge.rs"],
+      "files": ["components/badge.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "button",
       "description": "Accessible button with variant and size options",
-      "files": ["button.rs"],
+      "files": ["components/button.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "calendar",
       "description": "Interactive month calendar with day selection",
-      "files": ["calendar.rs"],
+      "files": ["components/calendar.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "card",
       "description": "Composable card layout with header, body, and footer slots",
-      "files": ["card.rs"],
+      "files": ["components/card.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "carousel",
       "description": "Animated slide carousel with previous/next navigation",
-      "files": ["carousel.rs"],
+      "files": ["components/carousel.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "checkbox",
       "description": "Controlled checkbox input",
-      "files": ["checkbox.rs"],
+      "files": ["components/checkbox.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "data_table",
       "description": "Data-driven table with sortable columns and pagination; rows are key-value pairs mirroring JSON objects",
-      "files": ["data_table.rs"],
+      "files": ["components/data_table.rs"],
       "deps": ["table", "pagination", "icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "date_input",
       "description": "Date picker input backed by a Calendar popover",
-      "files": ["date_input.rs"],
+      "files": ["components/date_input.rs"],
       "deps": ["calendar", "icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "drawer",
       "description": "Slide-in panel from any edge of the screen",
-      "files": ["drawer.rs"],
+      "files": ["components/drawer.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "dropdown",
       "description": "Accessible dropdown menu with keyboard navigation",
-      "files": ["dropdown.rs"],
+      "files": ["components/dropdown.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "file_upload",
       "description": "File input as a drag-and-drop zone or button",
-      "files": ["file_upload.rs"],
+      "files": ["components/file_upload.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] },
+        { "name": "yew", "version": "0.23", "features": ["csr"] },
         { "name": "web-sys", "version": "0.3", "features": ["HtmlInputElement", "DataTransfer", "FileList", "File"] }
       ]
     },
     {
       "name": "form_field",
       "description": "Form field wrapper with label, input slot, and error message",
-      "files": ["form_field.rs"],
+      "files": ["components/form_field.rs"],
       "deps": ["label"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "input",
       "description": "Styled text input with variant and size options",
-      "files": ["input.rs"],
+      "files": ["components/input.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] },
+        { "name": "yew", "version": "0.23", "features": ["csr"] },
         { "name": "web-sys", "version": "0.3", "features": ["HtmlInputElement"] }
       ]
     },
     {
       "name": "label",
       "description": "Accessible form label",
-      "files": ["label.rs"],
+      "files": ["components/label.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "modal",
       "description": "Accessible dialog with overlay and animated panel",
-      "files": ["modal.rs"],
+      "files": ["components/modal.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "nav",
       "description": "Vertical accordion navigation with nested items",
-      "files": ["nav.rs"],
+      "files": ["components/nav.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "nav_menu",
       "description": "Horizontal navigation bar with hover flyout submenus",
-      "files": ["nav_menu.rs"],
+      "files": ["components/nav_menu.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "pagination",
       "description": "Page navigation with previous, next, and numbered page items",
-      "files": ["pagination.rs"],
+      "files": ["components/pagination.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "popover",
       "description": "Floating content panel anchored to a trigger element",
-      "files": ["popover.rs"],
+      "files": ["components/popover.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "progress",
       "description": "Horizontal progress bar",
-      "files": ["progress.rs"],
+      "files": ["components/progress.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "radio",
       "description": "Controlled radio button group",
-      "files": ["radio.rs"],
+      "files": ["components/radio.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "select",
       "description": "Styled select dropdown with icon indicator",
-      "files": ["select.rs"],
+      "files": ["components/select.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] },
+        { "name": "yew", "version": "0.23", "features": ["csr"] },
         { "name": "web-sys", "version": "0.3", "features": ["HtmlSelectElement"] }
       ]
     },
     {
       "name": "separator",
       "description": "Horizontal or vertical divider line",
-      "files": ["separator.rs"],
+      "files": ["components/separator.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "sidebar",
       "description": "Collapsible application sidebar with header, nav, footer, and minimize support",
-      "files": ["sidebar.rs"],
+      "files": ["components/sidebar.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "slider",
       "description": "Controlled range input with styled track fill",
-      "files": ["slider.rs"],
+      "files": ["components/slider.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] },
+        { "name": "yew", "version": "0.23", "features": ["csr"] },
         { "name": "web-sys", "version": "0.3", "features": ["HtmlInputElement"] }
       ]
     },
     {
       "name": "spinner",
       "description": "Animated loading spinner",
-      "files": ["spinner.rs"],
+      "files": ["components/spinner.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "table",
       "description": "Composable table primitives: Table, TableHeader, TableBody, TableRow, TableHead, TableCell",
-      "files": ["table.rs"],
+      "files": ["components/table.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "tabs",
       "description": "Tab bar with panel switching",
-      "files": ["tabs.rs"],
+      "files": ["components/tabs.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "textarea",
       "description": "Styled multi-line text input",
-      "files": ["textarea.rs"],
+      "files": ["components/textarea.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "toast",
       "description": "Ephemeral notification toasts with auto-dismiss",
-      "files": ["toast.rs"],
+      "files": ["components/toast.rs"],
       "deps": ["icons"],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     },
     {
       "name": "tooltip",
       "description": "Hover tooltip anchored to any element",
-      "files": ["tooltip.rs"],
+      "files": ["components/tooltip.rs"],
       "deps": [],
       "cargo_deps": [
-        { "name": "yew", "version": "0.21", "features": ["csr"] }
+        { "name": "yew", "version": "0.23", "features": ["csr"] }
       ]
     }
   ]
