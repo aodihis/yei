@@ -1,0 +1,55 @@
+name: Validate Registry
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate registry.json
+        run: |
+          python3 - <<'EOF'
+          import json, sys, os, glob
+
+          with open("registry.json") as f:
+              data = json.load(f)
+
+          components = data["components"]
+          names = {c["name"] for c in components}
+          errors = []
+
+          for c in components:
+              # Every declared file must exist on disk
+              for fname in c["files"]:
+                  if not os.path.exists(fname):
+                      errors.append(f"[{c['name']}] declared file '{fname}' not found")
+
+              # Every dep must be a registered component name
+              for dep in c.get("deps", []):
+                  if dep not in names:
+                      errors.append(f"[{c['name']}] dep '{dep}' is not in the registry")
+
+          # Every .rs file on disk must be registered
+          registered_files = {f for c in components for f in c["files"]}
+          for fpath in glob.glob("*.rs"):
+              if fpath not in registered_files:
+                  errors.append(f"File '{fpath}' exists on disk but is not listed in registry.json")
+
+          # yei.css must exist
+          if not os.path.exists("yei.css"):
+              errors.append("yei.css not found")
+
+          if errors:
+              print("Registry validation failed:")
+              for e in errors:
+                  print(f"  ✗ {e}")
+              sys.exit(1)
+
+          print(f"✓ registry.json valid — {len(components)} components, no missing files or broken deps")
+          EOF
