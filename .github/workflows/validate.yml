@@ -104,6 +104,6 @@ jobs:
 
           ssh -i ~/.ssh/deploy_key ${{ vars.VPS_USER }}@${{ vars.VPS_HOST }} bash <<'ENDSSH'
             set -e
-            cd /opt/yei-registry
+            cd /opt/apps/yei-registry
             git pull --ff-only
           ENDSSH
