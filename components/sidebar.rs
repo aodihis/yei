@@ -22,6 +22,7 @@ pub struct SidebarContext {
     pub open:      bool,
     pub minimized: bool,
     pub toggle:    Callback<()>,
+    pub close:     Callback<()>,
     pub minimize:  Callback<()>,
 }
 
@@ -49,6 +50,7 @@ pub struct SidebarProps {
 
 pub enum SidebarMsg {
     Toggle,
+    Close,
     ToggleMinimize,
 }
 
@@ -68,6 +70,7 @@ impl Component for Sidebar {
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             SidebarMsg::Toggle         => { self.open      = !self.open;      true }
+            SidebarMsg::Close          => { self.open      = false;           true }
             SidebarMsg::ToggleMinimize => { self.minimized = !self.minimized; true }
         }
     }
@@ -78,12 +81,14 @@ impl Component for Sidebar {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let p        = ctx.props();
-        let toggle   = ctx.link().callback(|_: ()| SidebarMsg::Toggle);
-        let minimize = ctx.link().callback(|_: ()| SidebarMsg::ToggleMinimize);
+        let toggle      = ctx.link().callback(|_: ()| SidebarMsg::Toggle);
+        let close       = ctx.link().callback(|_: ()| SidebarMsg::Close);
+        let minimize    = ctx.link().callback(|_: ()| SidebarMsg::ToggleMinimize);
+        let backdrop_cb = ctx.link().callback(|_: MouseEvent| SidebarMsg::Close);
         let minimize_cb = minimize.reform(|_: MouseEvent| ());
-        let ctx_val  = SidebarContext {
+        let ctx_val     = SidebarContext {
             open: self.open, minimized: self.minimized,
-            toggle, minimize,
+            toggle, close, minimize,
         };
 
         let aside_cls    = sidebar_classes(self.open, self.minimized, &p.class);
@@ -93,6 +98,9 @@ impl Component for Sidebar {
 
         html! {
             <ContextProvider<SidebarContext> context={ctx_val}>
+                if self.open {
+                    <div class="fixed inset-0 bg-black/40 z-40 md:hidden" onclick={backdrop_cb} />
+                }
                 <aside class={aside_cls}>
                     { for p.children.iter() }
                     if p.minimizable {
@@ -384,12 +392,14 @@ fn sidebar_icon_slot(icon: &Option<NavIcon>, minimized: bool) -> Html {
 }
 
 fn sidebar_classes(open: bool, minimized: bool, extra: &Classes) -> Classes {
-    let base    = "yei-sidebar flex flex-col h-full bg-background border-r border-border transition-all duration-300 overflow-hidden shrink-0";
-    let width   = match (open, minimized) {
-        (false, _)    => "w-0",
-        (true, true)  => "w-14",
+    let base      = "yei-sidebar flex flex-col bg-background border-r border-border transition-all duration-300 overflow-hidden shrink-0";
+    let pos       = "fixed inset-y-0 left-0 z-50 h-screen md:relative md:inset-auto md:left-auto md:z-auto md:h-full";
+    let translate = if open { "translate-x-0" } else { "-translate-x-full md:translate-x-0" };
+    let width     = match (open, minimized) {
+        (false, _)    => "w-64 md:w-0",
+        (true, true)  => "w-64 md:w-14",
         (true, false) => "w-64",
     };
-    let min_cls = if minimized { "yei-sidebar--minimized" } else { "" };
-    classes!(base, width, min_cls, extra.clone())
+    let min_cls   = if minimized { "yei-sidebar--minimized" } else { "" };
+    classes!(base, pos, translate, width, min_cls, extra.clone())
 }
