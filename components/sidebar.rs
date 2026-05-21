@@ -34,34 +34,29 @@ struct SidebarNavContext {
     depth:     u8,
 }
 
-// --- Sidebar ---
+// --- SidebarProvider ---
 
 #[derive(Properties, PartialEq)]
-pub struct SidebarProps {
-    #[prop_or_default]
-    pub children: Children,
+pub struct SidebarProviderProps {
+    pub children:     Children,
     #[prop_or(true)]
     pub default_open: bool,
-    #[prop_or(true)]
-    pub minimizable: bool,
-    #[prop_or_default]
-    pub class: Classes,
 }
 
-pub enum SidebarMsg {
+pub enum SidebarProviderMsg {
     Toggle,
     Close,
     ToggleMinimize,
 }
 
-pub struct Sidebar {
+pub struct SidebarProvider {
     open:      bool,
     minimized: bool,
 }
 
-impl Component for Sidebar {
-    type Message = SidebarMsg;
-    type Properties = SidebarProps;
+impl Component for SidebarProvider {
+    type Message = SidebarProviderMsg;
+    type Properties = SidebarProviderProps;
 
     fn create(ctx: &Context<Self>) -> Self {
         Self { open: ctx.props().default_open, minimized: false }
@@ -69,9 +64,9 @@ impl Component for Sidebar {
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            SidebarMsg::Toggle         => { self.open      = !self.open;      true }
-            SidebarMsg::Close          => { self.open      = false;           true }
-            SidebarMsg::ToggleMinimize => { self.minimized = !self.minimized; true }
+            SidebarProviderMsg::Toggle         => { self.open      = !self.open;      true }
+            SidebarProviderMsg::Close          => { self.open      = false;           true }
+            SidebarProviderMsg::ToggleMinimize => { self.minimized = !self.minimized; true }
         }
     }
 
@@ -81,37 +76,63 @@ impl Component for Sidebar {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let p        = ctx.props();
-        let toggle      = ctx.link().callback(|_: ()| SidebarMsg::Toggle);
-        let close       = ctx.link().callback(|_: ()| SidebarMsg::Close);
-        let minimize    = ctx.link().callback(|_: ()| SidebarMsg::ToggleMinimize);
-        let backdrop_cb = ctx.link().callback(|_: MouseEvent| SidebarMsg::Close);
-        let minimize_cb = minimize.reform(|_: MouseEvent| ());
-        let ctx_val     = SidebarContext {
+        let toggle   = ctx.link().callback(|_: ()| SidebarProviderMsg::Toggle);
+        let close    = ctx.link().callback(|_: ()| SidebarProviderMsg::Close);
+        let minimize = ctx.link().callback(|_: ()| SidebarProviderMsg::ToggleMinimize);
+        let ctx_val  = SidebarContext {
             open: self.open, minimized: self.minimized,
             toggle, close, minimize,
         };
-
-        let aside_cls    = sidebar_classes(self.open, self.minimized, &p.class);
-        let btn_cls      = "flex items-center gap-2 w-full px-3 py-3 border-t border-border text-foreground/60 hover:bg-muted hover:text-foreground transition-colors shrink-0 text-sm";
-        let chevron_base = "transition-transform duration-200";
-        let chevron_cls  = classes!(chevron_base, if self.minimized { "rotate-180" } else { "" });
-
         html! {
             <ContextProvider<SidebarContext> context={ctx_val}>
-                if self.open {
-                    <div class="fixed inset-0 bg-black/40 z-40 md:hidden" onclick={backdrop_cb} />
-                }
-                <aside class={aside_cls}>
-                    { for p.children.iter() }
-                    if p.minimizable {
-                        <button type="button" class={btn_cls} onclick={minimize_cb} aria-label="Toggle minimize">
-                            <span class={chevron_cls}>{ icon_chevron_right() }</span>
-                            <span class="truncate yei-sidebar-label">{"Minimize"}</span>
-                        </button>
-                    }
-                </aside>
+                { for p.children.iter() }
             </ContextProvider<SidebarContext>>
         }
+    }
+}
+
+// --- Sidebar ---
+
+#[derive(Properties, PartialEq)]
+pub struct SidebarProps {
+    #[prop_or_default]
+    pub children:    Children,
+    #[prop_or(true)]
+    pub minimizable: bool,
+    #[prop_or_default]
+    pub class:       Classes,
+}
+
+#[function_component(Sidebar)]
+pub fn sidebar(props: &SidebarProps) -> Html {
+    let ctx = use_context::<SidebarContext>().unwrap_or_else(|| SidebarContext {
+        open: true, minimized: false,
+        toggle: Callback::noop(), close: Callback::noop(), minimize: Callback::noop(),
+    });
+
+    let close_cb    = ctx.close.reform(|_: MouseEvent| ());
+    let minimize_cb = ctx.minimize.reform(|_: MouseEvent| ());
+    let aside_cls   = sidebar_classes(ctx.open, ctx.minimized, &props.class);
+
+    let btn_base     = "flex items-center gap-2 w-full px-3 py-3 border-t border-border text-foreground/60 hover:bg-muted hover:text-foreground transition-colors shrink-0 text-sm";
+    let chevron_base = "transition-transform duration-200";
+    let chevron_cls  = classes!(chevron_base, if ctx.minimized { "rotate-180" } else { "" });
+
+    html! {
+        <>
+            if ctx.open {
+                <div class="fixed inset-0 bg-black/40 z-40 md:hidden" onclick={close_cb} />
+            }
+            <aside class={aside_cls}>
+                { for props.children.iter() }
+                if props.minimizable {
+                    <button type="button" class={btn_base} onclick={minimize_cb} aria-label="Toggle minimize">
+                        <span class={chevron_cls}>{ icon_chevron_right() }</span>
+                        <span class="truncate yei-sidebar-label">{"Minimize"}</span>
+                    </button>
+                }
+            </aside>
+        </>
     }
 }
 
@@ -120,9 +141,9 @@ impl Component for Sidebar {
 #[derive(Properties, PartialEq)]
 pub struct SidebarHeaderProps {
     #[prop_or_default]
-    pub logo: Option<NavIcon>,
+    pub logo:  Option<NavIcon>,
     #[prop_or_default]
-    pub name: Option<AttrValue>,
+    pub name:  Option<AttrValue>,
     #[prop_or_default]
     pub class: Classes,
 }
@@ -132,10 +153,8 @@ pub fn sidebar_header(props: &SidebarHeaderProps) -> Html {
     if props.logo.is_none() && props.name.is_none() {
         return html! {};
     }
-
     let base = "flex items-center gap-3 px-4 py-4 border-b border-border shrink-0";
     let cls  = classes!(base, props.class.clone());
-
     html! {
         <div class={cls}>
             if let Some(logo) = &props.logo {
@@ -162,7 +181,6 @@ pub fn sidebar_trigger(props: &SidebarTriggerProps) -> Html {
     let onclick = sidebar_ctx
         .map(|c| c.toggle.reform(|_: MouseEvent| ()))
         .unwrap_or_default();
-
     let base = "inline-flex items-center justify-center h-8 w-8 rounded-md text-foreground/70 hover:bg-muted hover:text-foreground transition-colors";
     let cls  = classes!(base, props.class.clone());
     html! {
@@ -179,7 +197,7 @@ pub struct SidebarContentProps {
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
-    pub class: Classes,
+    pub class:    Classes,
 }
 
 #[function_component(SidebarContent)]
@@ -196,7 +214,7 @@ pub struct SidebarFooterProps {
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
-    pub class: Classes,
+    pub class:    Classes,
 }
 
 #[function_component(SidebarFooter)]
@@ -228,7 +246,7 @@ pub struct SidebarNavProps {
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
-    pub class: Classes,
+    pub class:    Classes,
 }
 
 #[function_component(SidebarNav)]
@@ -250,17 +268,19 @@ pub fn sidebar_nav(props: &SidebarNavProps) -> Html {
 
 #[derive(Properties, PartialEq)]
 pub struct SidebarNavItemProps {
-    pub title: AttrValue,
-    #[prop_or(AttrValue::Static("#"))]
-    pub href: AttrValue,
+    pub title:    AttrValue,
     #[prop_or_default]
-    pub icon: Option<NavIcon>,
+    pub href:     Option<AttrValue>,
+    #[prop_or_default]
+    pub icon:     Option<NavIcon>,
+    #[prop_or_default]
+    pub active:   bool,
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
-    pub class: Classes,
+    pub class:    Classes,
     #[prop_or_default]
-    pub onclick: Callback<MouseEvent>,
+    pub onclick:  Callback<MouseEvent>,
 }
 
 pub enum SidebarNavItemMsg { Toggle }
@@ -311,12 +331,10 @@ impl SidebarNavItem {
         let row_state = if self.open { "bg-muted text-foreground" } else { "text-foreground/80 hover:bg-muted hover:text-foreground" };
         let row_cls   = classes!(row_base, row_pad, row_state, p.class.clone());
 
-        let chevron_rot  = if self.open { "rotate-90" } else { "" };
         let chevron_base = "ml-auto shrink-0 transition-transform duration-200 yei-sidebar-label";
-        let chevron_cls  = classes!(chevron_base, chevron_rot);
-
-        let body_base = "overflow-hidden transition-all duration-200";
-        let body_cls  = classes!(body_base, if !minimized && self.open { "max-h-[60rem]" } else { "max-h-0" });
+        let chevron_cls  = classes!(chevron_base, if self.open { "rotate-90" } else { "" });
+        let body_base    = "overflow-hidden transition-all duration-200";
+        let body_cls     = classes!(body_base, if !minimized && self.open { "max-h-[60rem]" } else { "max-h-0" });
 
         let on_toggle = if minimized {
             Callback::default()
@@ -346,17 +364,39 @@ impl SidebarNavItem {
         let p         = ctx.props();
         let minimized = nav_ctx.minimized;
 
-        let base    = "flex items-center rounded-md text-sm text-foreground/70 hover:bg-muted hover:text-foreground transition-colors select-none";
+        let sidebar_close = ctx.link()
+            .context::<SidebarContext>(Callback::noop())
+            .map(|(c, _)| c.close)
+            .unwrap_or_default();
+        let user_onclick = p.onclick.clone();
+        let onclick = Callback::from(move |e: MouseEvent| {
+            user_onclick.emit(e);
+            sidebar_close.emit(());
+        });
+
+        let active_cls = if p.active {
+            "bg-secondary text-foreground font-medium"
+        } else {
+            "text-foreground/70 hover:bg-muted hover:text-foreground"
+        };
+        let base    = "flex items-center rounded-md text-sm transition-colors select-none";
         let pad_cls = if minimized { "p-0 justify-center w-full" } else { "px-3 py-2 w-full" };
-        let cls     = classes!(base, pad_cls, p.class.clone());
+        let cls     = classes!(base, active_cls, pad_cls, p.class.clone());
         let title   = if minimized { p.title.clone() } else { AttrValue::default() };
 
         html! {
             <li>
-                <a class={cls} href={p.href.clone()} onclick={p.onclick.clone()} title={title}>
-                    { sidebar_icon_slot(&p.icon, minimized) }
-                    <span class="ml-2 truncate yei-sidebar-label">{ &p.title }</span>
-                </a>
+                if let Some(href) = &p.href {
+                    <a class={cls} href={href.clone()} onclick={onclick} title={title}>
+                        { sidebar_icon_slot(&p.icon, minimized) }
+                        <span class="ml-2 truncate yei-sidebar-label">{ &p.title }</span>
+                    </a>
+                } else {
+                    <button type="button" class={cls} onclick={onclick} title={title}>
+                        { sidebar_icon_slot(&p.icon, minimized) }
+                        <span class="ml-2 truncate yei-sidebar-label">{ &p.title }</span>
+                    </button>
+                }
             </li>
         }
     }
@@ -369,7 +409,7 @@ pub struct SidebarNavLabelProps {
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
-    pub class: Classes,
+    pub class:    Classes,
 }
 
 #[function_component(SidebarNavLabel)]
