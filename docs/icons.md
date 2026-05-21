@@ -1,6 +1,6 @@
 # Icons
 
-SVG icon set used by many components — installed automatically as a dependency.
+SVG icon set based on [Lucide](https://lucide.dev) — used by many components and installed automatically as a dependency.
 
 ## Installation
 
