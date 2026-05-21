@@ -167,16 +167,16 @@ pub fn sidebar_header(props: &SidebarHeaderProps) -> Html {
     }
 }
 
-// --- SidebarTrigger ---
+// --- SidebarToggle ---
 
 #[derive(Properties, PartialEq)]
-pub struct SidebarTriggerProps {
+pub struct SidebarToggleProps {
     #[prop_or_default]
     pub class: Classes,
 }
 
-#[function_component(SidebarTrigger)]
-pub fn sidebar_trigger(props: &SidebarTriggerProps) -> Html {
+#[function_component(SidebarToggle)]
+pub fn sidebar_trigger(props: &SidebarToggleProps) -> Html {
     let sidebar_ctx = use_context::<SidebarContext>();
     let onclick = sidebar_ctx
         .map(|c| c.toggle.reform(|_: MouseEvent| ()))
@@ -371,7 +371,14 @@ impl SidebarNavItem {
         let user_onclick = p.onclick.clone();
         let onclick = Callback::from(move |e: MouseEvent| {
             user_onclick.emit(e);
-            sidebar_close.emit(());
+            let is_mobile = web_sys::window()
+                .and_then(|w| w.inner_width().ok())
+                .and_then(|v| v.as_f64())
+                .map(|w| w < 768.0)
+                .unwrap_or(false);
+            if is_mobile {
+                sidebar_close.emit(());
+            }
         });
 
         let active_cls = if p.active {
