@@ -21,6 +21,7 @@ impl PartialEq for NavIcon {
 pub struct SidebarContext {
     pub open:      bool,
     pub minimized: bool,
+    pub inline:    bool,
     pub toggle:    Callback<()>,
     pub close:     Callback<()>,
     pub minimize:  Callback<()>,
@@ -41,6 +42,8 @@ pub struct SidebarProviderProps {
     pub children:     Children,
     #[prop_or(true)]
     pub default_open: bool,
+    #[prop_or_default]
+    pub inline:       bool,
 }
 
 pub enum SidebarProviderMsg {
@@ -80,7 +83,7 @@ impl Component for SidebarProvider {
         let close    = ctx.link().callback(|_: ()| SidebarProviderMsg::Close);
         let minimize = ctx.link().callback(|_: ()| SidebarProviderMsg::ToggleMinimize);
         let ctx_val  = SidebarContext {
-            open: self.open, minimized: self.minimized,
+            open: self.open, minimized: self.minimized, inline: p.inline,
             toggle, close, minimize,
         };
         html! {
@@ -106,13 +109,13 @@ pub struct SidebarProps {
 #[function_component(Sidebar)]
 pub fn sidebar(props: &SidebarProps) -> Html {
     let ctx = use_context::<SidebarContext>().unwrap_or_else(|| SidebarContext {
-        open: true, minimized: false,
+        open: true, minimized: false, inline: false,
         toggle: Callback::noop(), close: Callback::noop(), minimize: Callback::noop(),
     });
 
     let close_cb    = ctx.close.reform(|_: MouseEvent| ());
     let minimize_cb = ctx.minimize.reform(|_: MouseEvent| ());
-    let aside_cls   = sidebar_classes(ctx.open, ctx.minimized, &props.class);
+    let aside_cls   = sidebar_classes(ctx.open, ctx.minimized, ctx.inline, &props.class);
 
     let btn_base     = "flex items-center gap-2 w-full px-3 py-3 border-t border-border text-foreground/60 hover:bg-muted hover:text-foreground transition-colors shrink-0 text-sm";
     let chevron_base = "transition-transform duration-200";
@@ -120,7 +123,7 @@ pub fn sidebar(props: &SidebarProps) -> Html {
 
     html! {
         <>
-            if ctx.open {
+            if ctx.open && !ctx.inline {
                 <div class="fixed inset-0 bg-black/40 z-40 md:hidden" onclick={close_cb} />
             }
             <aside class={aside_cls}>
@@ -364,20 +367,23 @@ impl SidebarNavItem {
         let p         = ctx.props();
         let minimized = nav_ctx.minimized;
 
-        let sidebar_close = ctx.link()
+        let sidebar_ctx = ctx.link()
             .context::<SidebarContext>(Callback::noop())
-            .map(|(c, _)| c.close)
-            .unwrap_or_default();
-        let user_onclick = p.onclick.clone();
+            .map(|(c, _)| c);
+        let sidebar_close = sidebar_ctx.as_ref().map(|c| c.close.clone()).unwrap_or_default();
+        let is_inline     = sidebar_ctx.map(|c| c.inline).unwrap_or(false);
+        let user_onclick  = p.onclick.clone();
         let onclick = Callback::from(move |e: MouseEvent| {
             user_onclick.emit(e);
-            let is_mobile = web_sys::window()
-                .and_then(|w| w.inner_width().ok())
-                .and_then(|v| v.as_f64())
-                .map(|w| w < 768.0)
-                .unwrap_or(false);
-            if is_mobile {
-                sidebar_close.emit(());
+            if !is_inline {
+                let is_mobile = web_sys::window()
+                    .and_then(|w| w.inner_width().ok())
+                    .and_then(|v| v.as_f64())
+                    .map(|w| w < 768.0)
+                    .unwrap_or(false);
+                if is_mobile {
+                    sidebar_close.emit(());
+                }
             }
         });
 
@@ -438,8 +444,19 @@ fn sidebar_icon_slot(icon: &Option<NavIcon>, minimized: bool) -> Html {
     html! { <span class={cls}>{ content }</span> }
 }
 
-fn sidebar_classes(open: bool, minimized: bool, extra: &Classes) -> Classes {
-    let base      = "yei-sidebar flex flex-col bg-background border-r border-border transition-all duration-300 overflow-hidden shrink-0";
+fn sidebar_classes(open: bool, minimized: bool, inline: bool, extra: &Classes) -> Classes {
+    let base    = "yei-sidebar flex flex-col bg-background border-r border-border transition-all duration-300 overflow-hidden shrink-0";
+    let min_cls = if minimized { "yei-sidebar--minimized" } else { "" };
+
+    if inline {
+        let width = match (open, minimized) {
+            (false, _)    => "w-0",
+            (true, true)  => "w-14",
+            (true, false) => "w-64",
+        };
+        return classes!(base, "h-full", width, min_cls, extra.clone());
+    }
+
     let pos       = "fixed inset-y-0 left-0 z-50 h-screen md:relative md:inset-auto md:left-auto md:z-auto md:h-full";
     let translate = if open { "translate-x-0" } else { "-translate-x-full md:translate-x-0" };
     let width     = match (open, minimized) {
@@ -447,6 +464,5 @@ fn sidebar_classes(open: bool, minimized: bool, extra: &Classes) -> Classes {
         (true, true)  => "w-64 md:w-14",
         (true, false) => "w-64",
     };
-    let min_cls   = if minimized { "yei-sidebar--minimized" } else { "" };
     classes!(base, pos, translate, width, min_cls, extra.clone())
 }
